@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Modern Browser</title>
   <style>
-    /* Global Styles */
     body, html {
       margin: 0;
       padding: 0;
@@ -14,7 +13,6 @@
       background: linear-gradient(135deg, #0c0f1a, #0a0e2a); /* Black with slight blue tint */
     }
 
-    /* Gradient Background */
     .gradient-background {
       position: absolute;
       top: 0;
@@ -25,7 +23,6 @@
       z-index: -1;
     }
 
-    /* Logo Styles */
     .logo {
       font-size: 3rem;
       font-weight: bold;
@@ -44,7 +41,6 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* Home Page */
     .home-page {
       display: flex;
       flex-direction: column;
@@ -52,11 +48,9 @@
       align-items: center;
       width: 100%;
       height: 100vh;
-      padding-top: 60px;
       text-align: center;
     }
 
-    /* Search Bar */
     .search-bar {
       display: flex;
       align-items: center;
@@ -88,21 +82,20 @@
       padding: 10px 20px;
       font-size: 16px;
       cursor: pointer;
-      transition: transform 0.3s ease;
       animation: gradient-slide 3s infinite linear;
+      transition: transform 0.3s ease;
     }
 
     .search-bar button:hover {
       transform: scale(1.05);
     }
 
-    /* Browser View */
     #browserView {
       position: absolute;
-      top: 60px; /* Account for top bar */
+      top: 60px;
       left: 0;
       width: 100%;
-      height: calc(100% - 60px); /* Subtract top bar height */
+      height: calc(100% - 60px);
       background-color: #000;
       z-index: 10;
       display: none;
@@ -114,7 +107,6 @@
       border: none;
     }
 
-    /* Top Bar */
     .top-bar {
       position: fixed;
       top: 0;
@@ -126,7 +118,7 @@
       justify-content: center;
       background: rgba(0, 0, 0, 0.6);
       z-index: 100;
-      transition: top 0.3s ease;
+      display: none; /* Initially hidden */
     }
 
     @media (max-width: 768px) {
@@ -177,19 +169,18 @@
     const browserFrame = document.getElementById('browserFrame');
     const topBar = document.getElementById('topBar');
 
-    // Navigate to search or URL
+    // Navigate to proxy
     function navigate(query) {
       let searchURL = query.trim();
-
-      // Use Google for queries or navigate to URLs
+      
       if (!searchURL.startsWith('http://') && !searchURL.startsWith('https://')) {
-        searchURL = `https://www.google.com/search?q=${encodeURIComponent(searchURL)}`;
+        searchURL = `https://ultraviolet-proxy-url.com/?q=${encodeURIComponent(searchURL)}`;
       }
 
       browserFrame.src = searchURL;
       homePage.style.display = 'none';
-      browserView.style.display = 'flex';
-      topBar.style.top = '0'; // Move the logo up during search
+      browserView.style.display = 'block';
+      topBar.style.display = 'flex'; // Show top bar
     }
 
     // Handle search button click
@@ -211,15 +202,10 @@
     function goHome() {
       homePage.style.display = 'flex';
       browserView.style.display = 'none';
-      topBar.style.top = '60px'; // Reset the logo to original position
+      topBar.style.display = 'none'; // Hide top bar
       homeSearchInput.value = '';
       browserFrame.src = '';
     }
-
-    // Adjust the top bar position when in search mode
-    window.addEventListener('load', () => {
-      topBar.style.top = '60px'; // Default position for logo on home page
-    });
   </script>
 </body>
 </html>
