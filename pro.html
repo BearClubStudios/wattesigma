@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Modern Browser</title>
+  <title>wattesigma Browser</title>
   <style>
+    /* General Styles */
     body, html {
       margin: 0;
       padding: 0;
@@ -27,9 +28,9 @@
     .logo {
       font-size: 3rem;
       font-weight: bold;
-      background: linear-gradient(45deg, #8e43ad, #2ecc70, #2980b9, #7d3cb5, #3498db, #9b59b6);
+      background: linear-gradient(90deg, #8e43ad, #2ecc70, #2980b9, #8e43ad);
       background-size: 400% 400%;
-      animation: gradient-slide 5s ease infinite;
+      animation: gradient-slide 10s linear infinite;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 20px;
@@ -38,8 +39,7 @@
 
     @keyframes gradient-slide {
       0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
     }
 
     .home-page {
@@ -102,13 +102,12 @@
       box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
     }
 
-    #results ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    #results li {
-      margin: 10px 0;
+    #results iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      border-radius: 16px;
+      background: #1a1a1a;
     }
 
     .top-bar {
@@ -141,6 +140,10 @@
       .search-bar button {
         width: 100%;
       }
+
+      #results iframe {
+        height: 400px;
+      }
     }
   </style>
 </head>
@@ -149,13 +152,13 @@
 
   <!-- Top Bar with Logo -->
   <div class="top-bar" id="topBar">
-    <div class="logo" onclick="goHome()">sigma</div>
+    <div class="logo" onclick="goHome()">wattesigma</div>
   </div>
 
   <div class="browser-container">
     <!-- Home Page -->
     <div id="homePage" class="home-page">
-      <div class="logo">sigma</div>
+      <div class="logo">wattesigma</div>
       <div class="search-bar">
         <input id="homeSearchInput" type="text" placeholder="Search or enter a query" />
         <button id="homeSearchButton">Search</button>
@@ -164,56 +167,29 @@
 
     <!-- Results Section -->
     <div id="results">
-      <h3>Search Results:</h3>
-      <ul id="resultsList"></ul>
+      <iframe id="resultsFrame"></iframe>
     </div>
   </div>
 
   <script>
     const homePage = document.getElementById('homePage');
     const results = document.getElementById('results');
-    const resultsList = document.getElementById('resultsList');
+    const resultsFrame = document.getElementById('resultsFrame');
     const homeSearchInput = document.getElementById('homeSearchInput');
     const homeSearchButton = document.getElementById('homeSearchButton');
     const topBar = document.getElementById('topBar');
 
-    const API_URL = "https://api.duckduckgo.com/?q=";
+    // Proxy Server URL for bypassing restrictions (Replace with your proxy or Ultraviolet)
+    const PROXY_URL = "https://your-proxy-server-url.com/";
 
-    // Navigate to the search query
+    // Handle Search
     function navigate(query) {
-      const apiUrl = `${API_URL}${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`;
-      
-      fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-          displayResults(data);
-        })
-        .catch(error => {
-          console.error("Error fetching search results:", error);
-          results.innerHTML = `<p>Sorry, no results found.</p>`;
-          results.style.display = "block";
-        });
+      const searchUrl = `${PROXY_URL}?q=${encodeURIComponent(query)}`;
+      resultsFrame.src = searchUrl;
 
       homePage.style.display = 'none';
       results.style.display = 'block';
       topBar.style.display = 'flex'; // Show top bar
-    }
-
-    // Display results
-    function displayResults(data) {
-      resultsList.innerHTML = '';
-
-      if (data.RelatedTopics && data.RelatedTopics.length > 0) {
-        data.RelatedTopics.forEach(topic => {
-          if (topic.Text && topic.FirstURL) {
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `<a href="${topic.FirstURL}" target="_blank">${topic.Text}</a>`;
-            resultsList.appendChild(listItem);
-          }
-        });
-      } else {
-        resultsList.innerHTML = `<li>No results found.</li>`;
-      }
     }
 
     // Handle search button click
@@ -237,7 +213,7 @@
       results.style.display = 'none';
       topBar.style.display = 'none'; // Hide top bar
       homeSearchInput.value = '';
-      resultsList.innerHTML = '';
+      resultsFrame.src = '';
     }
   </script>
 </body>
