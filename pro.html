@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Modern Browser</title>
   <style>
-    /* General Styles */
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -13,8 +12,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #1a1a1a; /* Slight bluish-black background */
-      background-image: linear-gradient(135deg, #1a1a1a, #003366); /* Slight bluish tint */
+      background-color: #1a1a1a;
+      background-image: linear-gradient(135deg, #1a1a1a, #003366);
       color: #fff;
     }
 
@@ -41,13 +40,13 @@
       padding: 20px;
     }
 
-    /* Gradient Logo with Sliding Animation */
+    /* Gradient Logo */
     .home-logo {
       font-size: 4rem;
       font-weight: bold;
-      background: linear-gradient(45deg, #8e43ad, #2ecc70, #2980b9); /* Purple, Green, and Blue gradient */
+      background: linear-gradient(45deg, #8e43ad, #2ecc70, #2980b9);
       background-size: 400% 400%;
-      animation: slide-gradient 5s ease infinite; /* Animation for sliding gradient */
+      animation: slide-gradient 5s ease infinite;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 30px;
@@ -56,15 +55,9 @@
     }
 
     @keyframes slide-gradient {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .search-bar {
@@ -77,40 +70,49 @@
       border-radius: 24px;
       padding: 10px 15px;
       gap: 10px;
-      transition: all 0.3s ease-in-out;
     }
 
     .search-bar input {
       flex: 1;
       font-size: 16px;
       padding: 10px;
-      border: 2px solid #007bff; /* Outline color */
+      border: 2px solid #007bff;
       outline: none;
       background-color: transparent;
       color: #fff;
       border-radius: 24px;
-      transition: all 0.3s ease-in-out;
     }
 
     .search-bar input:focus {
-      box-shadow: 0 0 10px 2px rgba(0, 123, 255, 0.8); /* Blue glow on focus */
+      box-shadow: 0 0 10px 2px rgba(0, 123, 255, 0.8);
     }
 
+    /* Gradient Animated Button */
     .search-bar button {
-      background-color: #007bff;
+      background: linear-gradient(45deg, #007bff, #8e43ad);
       color: white;
       border: none;
       border-radius: 20px;
       padding: 10px 20px;
       font-size: 16px;
       cursor: pointer;
-      transition: background-color 0.2s ease, transform 0.3s ease;
       height: 100%;
+      transition: background 0.3s ease, transform 0.3s ease;
+      animation: gradient-animation 3s infinite linear;
+    }
+
+    @keyframes gradient-animation {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
     }
 
     .search-bar button:hover {
-      background-color: #0056b3;
+      background: linear-gradient(45deg, #8e43ad, #007bff);
       transform: scale(1.05);
+    }
+
+    .hidden {
+      display: none;
     }
 
     /* Browser View */
@@ -118,37 +120,6 @@
       display: none;
       flex-direction: column;
       height: 100%;
-    }
-
-    .toolbar {
-      display: flex;
-      align-items: center;
-      padding: 8px;
-      background-color: rgba(255, 255, 255, 0.2);
-      border-bottom: 1px solid #ddd;
-      gap: 10px;
-    }
-
-    .toolbar button {
-      background-color: transparent;
-      border: none;
-      cursor: pointer;
-      font-size: 18px;
-      color: #fff;
-      transition: color 0.2s;
-    }
-
-    .toolbar button:hover {
-      color: #007bff;
-    }
-
-    .toolbar input {
-      flex: 1;
-      border: none;
-      outline: none;
-      font-size: 16px;
-      color: #fff;
-      background: none;
     }
 
     .frame {
@@ -161,10 +132,6 @@
       width: 100%;
       height: 100%;
       border: none;
-    }
-
-    .hidden {
-      display: none;
     }
 
     /* Responsive Design */
@@ -199,23 +166,16 @@
         sigma
       </div>
       <div class="search-bar">
-        <input id="homeSearchInput" type="text" placeholder="Search Firefox or enter a URL" />
+        <input id="homeSearchInput" type="text" placeholder="Search DuckDuckGo or enter a URL" />
         <button id="homeSearchButton">Search</button>
       </div>
     </div>
 
     <!-- Browser View -->
     <div id="browserView" class="hidden">
-      <div class="toolbar">
-        <button id="backButton">←</button>
-        <button id="forwardButton">→</button>
-        <button id="reloadButton">⟳</button>
-        <input type="text" id="urlInput" />
-      </div>
       <div class="frame">
         <iframe id="browserFrame" src=""></iframe>
       </div>
-      <div id="searchQuery" style="position: absolute; top: 10px; left: 10px; color: #fff; font-size: 16px;"></div>
     </div>
   </div>
 
@@ -224,81 +184,43 @@
     const browserView = document.getElementById('browserView');
     const homeSearchInput = document.getElementById('homeSearchInput');
     const homeSearchButton = document.getElementById('homeSearchButton');
-    const urlInput = document.getElementById('urlInput');
     const browserFrame = document.getElementById('browserFrame');
-    const backButton = document.getElementById('backButton');
-    const forwardButton = document.getElementById('forwardButton');
-    const reloadButton = document.getElementById('reloadButton');
-    const searchQuery = document.getElementById('searchQuery');
 
-    let historyStack = [];
-    let historyIndex = -1;
-
-    // Navigate using Firefox search engine
+    // Function to handle DuckDuckGo search or URL navigation
     function navigate(url) {
-      if (!url.startsWith('http://') && !url.startsWith('https://')) {
-        url = `https://search.mozilla.org/?q=${encodeURIComponent(url)}`; // Firefox search engine
-      }
-      browserFrame.src = url;
-      urlInput.value = url;
+      let searchURL = url.trim();
 
-      if (historyIndex < historyStack.length - 1) {
-        historyStack = historyStack.slice(0, historyIndex + 1);
+      // Check if input is a URL or a search query
+      if (!searchURL.startsWith('http://') && !searchURL.startsWith('https://')) {
+        searchURL = `https://duckduckgo.com/?q=${encodeURIComponent(searchURL)}`;
       }
-      historyStack.push(url);
-      historyIndex++;
 
-      // Display the search query on the top left
-      searchQuery.textContent = `Search: ${url}`;
+      // Set the iframe source and show the browser view
+      browserFrame.src = searchURL;
+      homePage.classList.add('hidden');
+      browserView.classList.remove('hidden');
     }
 
+    // Search button click event
     homeSearchButton.addEventListener('click', () => {
       const url = homeSearchInput.value.trim();
       if (url) {
-        homePage.classList.add('hidden');
-        browserView.classList.remove('hidden');
         navigate(url);
       }
     });
 
+    // Pressing Enter should trigger the search
     homeSearchInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         homeSearchButton.click();
       }
     });
 
-    backButton.addEventListener('click', () => {
-      if (historyIndex > 0) {
-        historyIndex--;
-        const url = historyStack[historyIndex];
-        browserFrame.src = url;
-        urlInput.value = url;
-      }
-    });
-
-    forwardButton.addEventListener('click', () => {
-      if (historyIndex < historyStack.length - 1) {
-        historyIndex++;
-        const url = historyStack[historyIndex];
-        browserFrame.src = url;
-        urlInput.value = url;
-      }
-    });
-
-    reloadButton.addEventListener('click', () => {
-      browserFrame.contentWindow.location.reload();
-    });
-
-    urlInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        navigate(urlInput.value.trim());
-      }
-    });
-
-    // Go back to home page when logo is clicked
+    // Go back to home page when clicking the logo
     function goHome() {
       homePage.classList.remove('hidden');
       browserView.classList.add('hidden');
+      homeSearchInput.value = ''; // Clear input field
     }
   </script>
 </body>
