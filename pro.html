@@ -155,9 +155,9 @@
       </div>
     </div>
 
-    <!-- Browser View -->
+    <!-- Browser View (Search Results) -->
     <div id="browserView">
-      <iframe id="browserFrame" src=""></iframe>
+      <iframe id="browserFrame" src="https://lite.duckduckgo.com/" sandbox=""></iframe>
     </div>
   </div>
 
@@ -169,12 +169,12 @@
     const browserFrame = document.getElementById('browserFrame');
     const topBar = document.getElementById('topBar');
 
-    // Navigate to proxy
+    // Navigate to the search query
     function navigate(query) {
       let searchURL = query.trim();
-      
+
       if (!searchURL.startsWith('http://') && !searchURL.startsWith('https://')) {
-        searchURL = `https://ultraviolet-proxy-url.com/?q=${encodeURIComponent(searchURL)}`;
+        searchURL = `https://lite.duckduckgo.com/lite?q=${encodeURIComponent(searchURL)}`;
       }
 
       browserFrame.src = searchURL;
