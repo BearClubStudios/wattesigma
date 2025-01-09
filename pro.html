@@ -24,7 +24,7 @@
       z-index: -1;
     }
 
-    /* Top Logo Bar */
+    /* Top Bar */
     .top-bar {
       position: fixed;
       top: 0;
@@ -36,6 +36,7 @@
       justify-content: center;
       background: rgba(0, 0, 0, 0.6);
       z-index: 100;
+      transition: top 0.3s ease;
     }
 
     .logo {
@@ -144,7 +145,7 @@
   <div class="gradient-background"></div>
 
   <!-- Top Bar with Logo -->
-  <div class="top-bar">
+  <div class="top-bar" id="topBar">
     <div class="logo" onclick="goHome()">sigma</div>
   </div>
 
@@ -152,7 +153,7 @@
     <!-- Home Page -->
     <div id="homePage" class="home-page">
       <div class="search-bar">
-        <input id="homeSearchInput" type="text" placeholder="Search Startpage or enter a URL" />
+        <input id="homeSearchInput" type="text" placeholder="Search or enter a URL" />
         <button id="homeSearchButton">Search</button>
       </div>
     </div>
@@ -169,19 +170,21 @@
     const homeSearchInput = document.getElementById('homeSearchInput');
     const homeSearchButton = document.getElementById('homeSearchButton');
     const browserFrame = document.getElementById('browserFrame');
+    const topBar = document.getElementById('topBar');
 
     // Navigate to search or URL
     function navigate(query) {
       let searchURL = query.trim();
 
-      // Use Startpage for queries or navigate to URLs
+      // Use Brave Search for queries or navigate to URLs
       if (!searchURL.startsWith('http://') && !searchURL.startsWith('https://')) {
-        searchURL = `https://www.startpage.com/do/dsearch?query=${encodeURIComponent(searchURL)}`;
+        searchURL = `https://search.brave.com/search?q=${encodeURIComponent(searchURL)}`;
       }
 
       browserFrame.src = searchURL;
       homePage.style.display = 'none';
       browserView.style.display = 'flex';
+      topBar.style.top = '0'; // Move the logo up during search
     }
 
     // Handle search button click
@@ -203,9 +206,15 @@
     function goHome() {
       homePage.style.display = 'flex';
       browserView.style.display = 'none';
+      topBar.style.top = '0'; // Reset the logo to original position
       homeSearchInput.value = '';
       browserFrame.src = '';
     }
+
+    // Adjust the top bar position when in search mode
+    window.addEventListener('load', () => {
+      topBar.style.top = '60px'; // Default position for logo on home page
+    });
   </script>
 </body>
 </html>
