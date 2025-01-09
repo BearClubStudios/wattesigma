@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>wattesigma Browser</title>
+  <title>wattesigma</title>
   <style>
     body, html {
       margin: 0;
@@ -32,8 +32,7 @@
       animation: gradient-slide 10s linear infinite;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 20px;
-      cursor: pointer;
+      margin-bottom: 40px;
     }
 
     @keyframes gradient-slide {
@@ -51,89 +50,42 @@
       text-align: center;
     }
 
-    .search-bar {
-      display: flex;
-      align-items: center;
-      width: 90%;
-      max-width: 600px;
-      gap: 10px;
-    }
-
-    .search-bar input {
-      flex: 1;
-      font-size: 16px;
-      padding: 10px;
-      border: 2px solid #007bff;
-      border-radius: 24px;
-      outline: none;
-      background-color: transparent;
-      color: #fff;
-    }
-
-    .search-bar input:focus {
-      box-shadow: 0 0 10px 2px rgba(0, 123, 255, 0.8);
-    }
-
-    .search-bar button {
+    .start-button {
       background: linear-gradient(45deg, #007bff, #8e43ad);
       color: white;
       border: none;
       border-radius: 24px;
-      padding: 10px 20px;
-      font-size: 16px;
+      padding: 15px 30px;
+      font-size: 20px;
       cursor: pointer;
       animation: gradient-slide 3s infinite linear;
       transition: transform 0.3s ease;
     }
 
-    .search-bar button:hover {
+    .start-button:hover {
       transform: scale(1.05);
     }
 
-    #results {
+    #iframe-container {
       display: none;
       position: absolute;
-      top: 100px; /* Clears space for the top bar */
+      top: 0;
       left: 0;
       width: 100%;
-      height: calc(100vh - 100px); /* Adjusts for the logo and search bar */
+      height: 100%;
+      z-index: 9999; /* Ensures iframe is over everything */
     }
 
-    #results iframe {
+    #iframe-container iframe {
       width: 100%;
       height: 100%;
       border: none;
     }
 
-    .top-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100px; /* Matches the logo clearance space */
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 100;
-    }
-
-    .top-bar .logo {
-      margin: 0;
-    }
-
     @media (max-width: 768px) {
-      .search-bar {
-        flex-direction: column;
-      }
-
-      .search-bar input {
-        margin-bottom: 10px;
-        width: 100%;
-      }
-
-      .search-bar button {
-        width: 100%;
+      .start-button {
+        padding: 10px 20px;
+        font-size: 18px;
       }
     }
   </style>
@@ -141,69 +93,27 @@
 <body>
   <div class="gradient-background"></div>
 
-  <!-- Top Bar with Logo -->
-  <div class="top-bar" id="topBar">
-    <div class="logo" onclick="goHome()">wattesigma</div>
+  <!-- Home Page -->
+  <div id="homePage" class="home-page">
+    <div class="logo">wattesigma</div>
+    <button id="startButton" class="start-button">Start</button>
   </div>
 
-  <div class="browser-container">
-    <!-- Home Page -->
-    <div id="homePage" class="home-page">
-      <div class="logo">wattesigma</div>
-      <div class="search-bar">
-        <input id="homeSearchInput" type="text" placeholder="Enter a URL" />
-        <button id="homeSearchButton">Go</button>
-      </div>
-    </div>
-
-    <!-- Results Section -->
-    <div id="results">
-      <iframe id="resultsFrame"></iframe>
-    </div>
+  <!-- Iframe Container -->
+  <div id="iframe-container">
+    <iframe src="https://beanwiki.awiki.org"></iframe>
   </div>
 
   <script>
     const homePage = document.getElementById('homePage');
-    const results = document.getElementById('results');
-    const resultsFrame = document.getElementById('resultsFrame');
-    const homeSearchInput = document.getElementById('homeSearchInput');
-    const homeSearchButton = document.getElementById('homeSearchButton');
-    const topBar = document.getElementById('topBar');
+    const iframeContainer = document.getElementById('iframe-container');
+    const startButton = document.getElementById('startButton');
 
-    // Handle Navigation
-    function navigate(url) {
-      // Check if the URL has a protocol, if not, add "http://"
-      if (!url.startsWith("http://") && !url.startsWith("https://")) {
-        url = "http://" + url;
-      }
-      resultsFrame.src = url;
-
-      homePage.style.display = 'none';
-      results.style.display = 'block';
-      topBar.style.display = 'flex'; // Show top bar
-    }
-
-    // Handle "Go" button click
-    homeSearchButton.addEventListener('click', () => {
-      const url = homeSearchInput.value.trim();
-      if (url) {
-        navigate(url);
-      }
+    // Handle "Start" button click
+    startButton.addEventListener('click', () => {
+      homePage.style.display = 'none'; // Hide the home page
+      iframeContainer.style.display = 'block'; // Show the iframe
     });
-
-    // Handle "Enter" key press
-    homeSearchInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        homeSearchButton.click();
-      }
-    });
-
-    // Handle Going Back to Home
-    function goHome() {
-      results.style.display = 'none';
-      homePage.style.display = 'flex';
-      topBar.style.display = 'none'; // Hide top bar
-    }
 
     // Confirmation before leaving the site
     window.addEventListener('beforeunload', (e) => {
