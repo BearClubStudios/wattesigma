@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>wattesigma Browser</title>
   <style>
-    /* General Styles */
     body, html {
       margin: 0;
       padding: 0;
@@ -21,7 +20,6 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: linear-gradient(135deg, #0c0f1a, #0a0e2a);
       z-index: -1;
     }
 
@@ -39,7 +37,7 @@
 
     @keyframes gradient-slide {
       0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
+      100% { background-position: 400% 50%; }
     }
 
     .home-page {
@@ -92,22 +90,17 @@
     }
 
     #results {
-      width: 90%;
-      max-width: 800px;
-      margin: 20px auto;
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.6);
-      border-radius: 16px;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
       display: none;
-      box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
     }
 
     #results iframe {
       width: 100%;
-      height: 600px;
+      height: 100%;
       border: none;
-      border-radius: 16px;
-      background: #1a1a1a;
     }
 
     .top-bar {
@@ -140,10 +133,6 @@
       .search-bar button {
         width: 100%;
       }
-
-      #results iframe {
-        height: 400px;
-      }
     }
   </style>
 </head>
@@ -160,8 +149,8 @@
     <div id="homePage" class="home-page">
       <div class="logo">wattesigma</div>
       <div class="search-bar">
-        <input id="homeSearchInput" type="text" placeholder="Search or enter a query" />
-        <button id="homeSearchButton">Search</button>
+        <input id="homeSearchInput" type="text" placeholder="Enter a URL" />
+        <button id="homeSearchButton">Go</button>
       </div>
     </div>
 
@@ -179,24 +168,24 @@
     const homeSearchButton = document.getElementById('homeSearchButton');
     const topBar = document.getElementById('topBar');
 
-    // Proxy Server URL for bypassing restrictions (Replace with your proxy or Ultraviolet)
-    const PROXY_URL = "https://your-proxy-server-url.com/";
-
-    // Handle Search
-    function navigate(query) {
-      const searchUrl = `${PROXY_URL}?q=${encodeURIComponent(query)}`;
-      resultsFrame.src = searchUrl;
+    // Handle Navigation
+    function navigate(url) {
+      // Check if the URL has a protocol, if not, add "http://"
+      if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        url = "http://" + url;
+      }
+      resultsFrame.src = url;
 
       homePage.style.display = 'none';
       results.style.display = 'block';
       topBar.style.display = 'flex'; // Show top bar
     }
 
-    // Handle search button click
+    // Handle "Go" button click
     homeSearchButton.addEventListener('click', () => {
-      const query = homeSearchInput.value.trim();
-      if (query) {
-        navigate(query);
+      const url = homeSearchInput.value.trim();
+      if (url) {
+        navigate(url);
       }
     });
 
@@ -207,14 +196,18 @@
       }
     });
 
-    // Go back to the home page
+    // Handle Going Back to Home
     function goHome() {
-      homePage.style.display = 'flex';
       results.style.display = 'none';
+      homePage.style.display = 'flex';
       topBar.style.display = 'none'; // Hide top bar
-      homeSearchInput.value = '';
-      resultsFrame.src = '';
     }
+
+    // Confirmation before leaving the site
+    window.addEventListener('beforeunload', (e) => {
+      e.preventDefault();
+      e.returnValue = 'You may have unsaved changes. Are you sure you want to leave?';
+    });
   </script>
 </body>
 </html>
