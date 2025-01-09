@@ -11,9 +11,10 @@
       padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       height: 100%;
-      background: linear-gradient(135deg, #0c0f1a, #0a0e2a); /* Original black with bluish tint */
+      background: linear-gradient(135deg, #0c0f1a, #0a0e2a); /* Black with slight blue tint */
     }
 
+    /* Gradient Background */
     .gradient-background {
       position: absolute;
       top: 0;
@@ -35,7 +36,6 @@
       -webkit-text-fill-color: transparent;
       margin-bottom: 20px;
       cursor: pointer;
-      text-align: center;
     }
 
     @keyframes gradient-slide {
@@ -181,9 +181,9 @@
     function navigate(query) {
       let searchURL = query.trim();
 
-      // Use Qwant for queries or navigate to URLs
+      // Use Google for queries or navigate to URLs
       if (!searchURL.startsWith('http://') && !searchURL.startsWith('https://')) {
-        searchURL = `https://www.qwant.com/?q=${encodeURIComponent(searchURL)}`;
+        searchURL = `https://www.google.com/search?q=${encodeURIComponent(searchURL)}`;
       }
 
       browserFrame.src = searchURL;
