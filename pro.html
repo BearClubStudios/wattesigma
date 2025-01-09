@@ -24,30 +24,18 @@
       z-index: -1;
     }
 
-    /* Top Bar */
-    .top-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 100;
-      transition: top 0.3s ease;
-    }
-
+    /* Logo Styles */
     .logo {
-      font-size: 2.5rem;
+      font-size: 3rem;
       font-weight: bold;
       background: linear-gradient(45deg, #8e43ad, #2ecc70, #2980b9);
       background-size: 400% 400%;
       animation: gradient-slide 5s ease infinite;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      margin-bottom: 20px;
       cursor: pointer;
+      text-align: center;
     }
 
     @keyframes gradient-slide {
@@ -64,7 +52,8 @@
       align-items: center;
       width: 100%;
       height: 100vh;
-      padding-top: 60px; /* Account for top bar */
+      padding-top: 60px;
+      text-align: center;
     }
 
     /* Search Bar */
@@ -125,6 +114,21 @@
       border: none;
     }
 
+    /* Top Bar */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 100;
+      transition: top 0.3s ease;
+    }
+
     @media (max-width: 768px) {
       .search-bar {
         flex-direction: column;
@@ -152,6 +156,7 @@
   <div class="browser-container">
     <!-- Home Page -->
     <div id="homePage" class="home-page">
+      <div class="logo">sigma</div>
       <div class="search-bar">
         <input id="homeSearchInput" type="text" placeholder="Search or enter a URL" />
         <button id="homeSearchButton">Search</button>
@@ -176,9 +181,9 @@
     function navigate(query) {
       let searchURL = query.trim();
 
-      // Use Brave Search for queries or navigate to URLs
+      // Use Qwant for queries or navigate to URLs
       if (!searchURL.startsWith('http://') && !searchURL.startsWith('https://')) {
-        searchURL = `https://search.brave.com/search?q=${encodeURIComponent(searchURL)}`;
+        searchURL = `https://www.qwant.com/?q=${encodeURIComponent(searchURL)}`;
       }
 
       browserFrame.src = searchURL;
@@ -206,7 +211,7 @@
     function goHome() {
       homePage.style.display = 'flex';
       browserView.style.display = 'none';
-      topBar.style.top = '0'; // Reset the logo to original position
+      topBar.style.top = '60px'; // Reset the logo to original position
       homeSearchInput.value = '';
       browserFrame.src = '';
     }
