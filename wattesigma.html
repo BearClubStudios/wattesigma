@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gruvbox Proxy</title>
+    <style>
+        /* Gruvbox colors */
+        :root {
+            --background: #282828;
+            --foreground: #ebdbb2;
+            --dark-gray: #3c3836;
+            --grayish-white: #a89984;
+            --green: #b8bb26;
+            --purple: #d3869b;
+            --blue: #83a598;
+            --button-bg: #504945;
+            --button-hover: #665c54;
+        }
+
+        /* General body styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+            color: var(--foreground);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Header for tabs and settings buttons */
+        header {
+            height: 10%;
+            background-color: var(--dark-gray);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        header button {
+            background-color: var(--button-bg);
+            border: none;
+            padding: 10px 20px;
+            color: var(--foreground);
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        header button:hover {
+            background-color: var(--button-hover);
+        }
+
+        header button svg {
+            margin-right: 5px;
+        }
+
+        /* Main container styling */
+        .main-container {
+            display: flex;
+            flex-grow: 1;
+            width: 100%;
+        }
+
+        /* Tabs area */
+        .tabs-container {
+            width: 30%;  /* Increased width to fit more content */
+            background-color: var(--dark-gray);
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            position: absolute;
+            top: 10%;
+            left: 0;
+            height: 90%;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .tabs-container .placeholder {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+        }
+
+        .tabs-container .placeholder h1 {
+            font-size: 2em;
+            background: linear-gradient(45deg, var(--green), var(--purple), var(--blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-animation 3s infinite;
+        }
+
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .tabs-container .placeholder p {
+            color: var(--grayish-white);
+            margin-top: 10px;
+        }
+
+        .tabs-container .new-tab-btn {
+            margin-top: 20px;
+            background-color: var(--green);
+            border: none;
+            color: var(--background);
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .tabs-container .new-tab-btn:hover {
+            background-color: var(--blue);
+        }
+
+        .tab-list {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .tab {
+            background-color: var(--button-bg);
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            color: var(--foreground);
+        }
+
+        .tab:hover {
+            background-color: var(--button-hover);
+        }
+
+        /* iFrame section */
+        .iframe-container {
+            width: 70%;  /* Increased width to fit more content */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--background);
+            color: var(--grayish-white);
+            transition: all 0.3s ease;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Hidden settings section */
+        .settings-container {
+            display: none;
+            padding: 20px;
+            color: var(--grayish-white);
+            background-color: var(--dark-gray);
+            height: 100%;
+            position: absolute;
+            top: 10%;
+            left: 0;
+            width: 30%;
+            z-index: 5;
+            transition: all 0.3s ease;
+        }
+
+        .settings-container h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <button id="tabsBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M2 2h12v12H2V2zm11 1H3v10h10V3z"/>
+            </svg>
+            Tabs
+        </button>
+        <button id="settingsBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M9.465 1.05a1.5 1.5 0 0 1 2.035.673l.153.292a2 2 0 0 0 1.848 1.1h.59a1.5 1.5 0 0 1 1.415 1.414v.592a2 2 0 0 0 1.1 1.848l.293.153a1.5 1.5 0 0 1 .673 2.035l-.153.293a2 2 0 0 0-1.1 1.848v.591a1.5 1.5 0 0 1-1.414 1.415h-.592a2 2 0 0 0-1.848 1.1l-.153.293a1.5 1.5 0 0 1-2.035.673l-.292-.153a2 2 0 0 0-1.848-1.1h-.591a1.5 1.5 0 0 1-1.415-1.414v-.592a2 2 0 0 0-1.1-1.848l-.293-.153a1.5 1.5 0 0 1-.673-2.035l.153-.293a2 2 0 0 0 1.1-1.848V5.07a1.5 1.5 0 0 1 1.414-1.415h.592a2 2 0 0 0 1.848-1.1l.153-.293a1.5 1.5 0 0 1 2.035-.673z"></path>
+            </svg>
+            Settings
+        </button>
+    </header>
+
+    <div class="main-container">
+        <div class="tabs-container" id="tabsContainer">
+            <div class="placeholder">
+                <h1>Wattesigma</h1>
+                <p>Browse the internet securely and privately.</p>
+                <button class="new-tab-btn" id="newTabBtn">New Tab</button>
+            </div>
+            <div class="tab-list" id="tabList">
+                <!-- Tabs will appear here -->
+            </div>
+        </div>
+        <div class="iframe-container" id="iframeContainer">
+            <p>iFrame content will go here.</p>
+        </div>
+    </div>
+
+    <script>
+        const tabsBtn = document.getElementById('tabsBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const tabsContainer = document.getElementById('tabsContainer');
+        const iframeContainer = document.getElementById('iframeContainer');
+        const newTabBtn = document.getElementById('newTabBtn');
+        const tabList = document.getElementById('tabList');
+        const settingsContainer = document.createElement('div');
+
+        // Create settings container (hidden by default)
+        settingsContainer.className = 'settings-container';
+        settingsContainer.innerHTML = `
+            <h2>Settings</h2>
+            <p>Settings content goes here...</p>
+        `;
+        tabsContainer.parentNode.insertBefore(settingsContainer, tabsContainer);
+
+        // Toggle between tabs and settings
+        tabsBtn.addEventListener('click', () => {
+            settingsContainer.style.display = 'none';
+            tabsContainer.style.display = 'flex';
+            iframeContainer.style.display = 'block';
+        });
+
+        settingsBtn.addEventListener('click', () => {
+            tabsContainer.style.display = 'none';
+            iframeContainer.style.display = 'none';
+            settingsContainer.style.display = 'block';
+        });
+
+        // New tab functionality
+        newTabBtn.addEventListener('click', () => {
+            const newTab = document.createElement('div');
+            newTab.classList.add('tab');
+            newTab.textContent = `Tab ${tabList.children.length + 1}`;
+            tabList.appendChild(newTab);
+        });
+    </script>
+</body>
+</html>
