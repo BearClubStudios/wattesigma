@@ -5,17 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gruvbox Proxy</title>
     <style>
-        /* Gruvbox colors */
         :root {
             --background: #282828;
             --foreground: #ebdbb2;
             --dark-gray: #3c3836;
             --grayish-white: #a89984;
-            --green: #b8bb26;
-            --purple: #d3869b;
-            --blue: #83a598;
             --button-bg: #504945;
             --button-hover: #665c54;
+            --gradient-start: #b8bb26;
+            --gradient-middle: #d3869b;
+            --gradient-end: #83a598;
         }
 
         body {
@@ -27,7 +26,6 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            overflow: hidden;
         }
 
         header {
@@ -37,6 +35,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 20px;
+            transition: background-color 0.3s ease;
         }
 
         header button {
@@ -56,86 +55,67 @@
         .main-container {
             display: flex;
             flex-grow: 1;
-            width: 100%;
         }
 
-        .tabs-container,
-        .settings-container {
-            width: 30%;
-            max-width: 300px;
+        .left-panel {
+            width: 25%;
             background-color: var(--dark-gray);
             padding: 20px;
             overflow-y: auto;
-            position: relative;
-            display: flex;
-            flex-direction: column;
+            transition: background-color 0.3s ease;
         }
 
-        .tabs-container .placeholder {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+        .tabs-container, .settings-container {
+            display: none;
             height: 100%;
-            text-align: center;
         }
 
-        .tabs-container .placeholder h1 {
+        .tabs-container.active, .settings-container.active {
+            display: block;
+        }
+
+        .placeholder h1 {
             font-size: 2em;
-            background: linear-gradient(45deg, var(--green), var(--purple), var(--blue));
+            background: linear-gradient(45deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            animation: gradient-animation 3s infinite;
         }
 
-        .tabs-container .placeholder p {
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .placeholder p {
             color: var(--grayish-white);
             margin-top: 10px;
         }
 
-        .tabs-container .new-tab-btn {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background-color: var(--green);
+        .new-tab-btn {
+            margin-top: 20px;
+            background-color: var(--gradient-start);
             border: none;
             color: var(--background);
             padding: 10px 20px;
             font-size: 1em;
             border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
-        .tabs-container .new-tab-btn:hover {
-            background-color: var(--blue);
-        }
-
-        .tab-list {
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .tab {
-            background-color: var(--button-bg);
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-            color: var(--foreground);
-        }
-
-        .tab:hover {
-            background-color: var(--button-hover);
+        .new-tab-btn:hover {
+            background-color: var(--gradient-middle);
         }
 
         .iframe-container {
-            flex-grow: 1;
-            background-color: var(--background);
+            width: 75%;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
+            flex-direction: column;
+            background-color: var(--background);
+            transition: background-color 0.3s ease;
+            overflow-y: auto;
         }
 
         iframe {
@@ -144,32 +124,57 @@
             border: none;
         }
 
-        .resize-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
+        .theme-dropdown {
+            position: relative;
+        }
+
+        .theme-dropdown button {
             background-color: var(--button-bg);
             border: none;
-            padding: 10px;
             color: var(--foreground);
-            border-radius: 5px;
+            padding: 10px 15px;
+            font-size: 1em;
             cursor: pointer;
         }
 
-        .resize-btn:hover {
-            background-color: var(--button-hover);
-        }
-
-        .settings-container {
+        .theme-dropdown-content {
             display: none;
-            flex-direction: column;
-            gap: 10px;
-            color: var(--grayish-white);
+            position: absolute;
+            background-color: var(--dark-gray);
+            border: 1px solid var(--button-bg);
+            z-index: 1;
+            min-width: 200px;
+            padding: 10px;
         }
 
-        .settings-container h2 {
-            margin: 0;
-            font-size: 1.5em;
+        .theme-dropdown-content .theme-option {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+
+        .theme-dropdown-content .theme-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .theme-dropdown:hover .theme-dropdown-content {
+            display: block;
+        }
+
+        .tabs-list {
+            margin-top: 10px;
+        }
+
+        .tab {
+            padding: 10px;
+            background-color: var(--button-bg);
+            color: var(--foreground);
+            border-radius: 5px;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -180,63 +185,158 @@
     </header>
 
     <div class="main-container">
-        <div class="tabs-container" id="tabsContainer">
-            <div class="placeholder" id="placeholder">
-                <h1>Wattesigma</h1>
-                <p>Browse the internet securely and privately.</p>
+        <div class="left-panel">
+            <div class="tabs-container active">
+                <div class="placeholder">
+                    <h1>Wattesigma</h1>
+                    <p>Browse the internet securely and privately.</p>
+                    <button class="new-tab-btn">New Tab</button>
+                    <div class="tabs-list"></div>
+                </div>
             </div>
-            <button class="new-tab-btn" id="newTabBtn">New Tab</button>
-            <div class="tab-list" id="tabList"></div>
+            <div class="settings-container">
+                <h2>Settings</h2>
+                <div class="theme-dropdown">
+                    <button>Select Theme</button>
+                    <div class="theme-dropdown-content"></div>
+                </div>
+            </div>
         </div>
-        <div class="settings-container" id="settingsContainer">
-            <h2>Settings</h2>
-            <p>Settings content goes here...</p>
-        </div>
-        <div class="iframe-container" id="iframeContainer">
-            <iframe src="https://example.com"></iframe>
-            <button class="resize-btn" id="resizeBtn"><-></button>
-        </div>
+        <div class="iframe-container"></div>
     </div>
 
     <script>
-        const newTabBtn = document.getElementById('newTabBtn');
-        const placeholder = document.getElementById('placeholder');
-        const tabList = document.getElementById('tabList');
-        const resizeBtn = document.getElementById('resizeBtn');
-        const tabsContainer = document.getElementById('tabsContainer');
-        const settingsContainer = document.getElementById('settingsContainer');
-        const tabsBtn = document.getElementById('tabsBtn');
-        const settingsBtn = document.getElementById('settingsBtn');
-        const iframeContainer = document.getElementById('iframeContainer');
-        let isIframeExpanded = false;
+        const themes = [
+            {
+                name: "Gruvbox",
+                colors: {
+                    background: "#282828",
+                    foreground: "#ebdbb2",
+                    darkGray: "#3c3836",
+                    buttonBg: "#504945",
+                    buttonHover: "#665c54",
+                    gradient: ["#b8bb26", "#d3869b", "#83a598"]
+                }
+            },
+            {
+                name: "Nord",
+                colors: {
+                    background: "#2e3440",
+                    foreground: "#d8dee9",
+                    darkGray: "#3b4252",
+                    buttonBg: "#4c566a",
+                    buttonHover: "#5e81ac",
+                    gradient: ["#8fbcbb", "#88c0d0", "#81a1c1"]
+                }
+            },
+            {
+                name: "Dracula",
+                colors: {
+                    background: "#282a36",
+                    foreground: "#f8f8f2",
+                    darkGray: "#44475a",
+                    buttonBg: "#6272a4",
+                    buttonHover: "#8be9fd",
+                    gradient: ["#ff79c6", "#bd93f9", "#50fa7b"]
+                }
+            },
+            {
+                name: "Solarized",
+                colors: {
+                    background: "#073642",
+                    foreground: "#839496",
+                    darkGray: "#002b36",
+                    buttonBg: "#586e75",
+                    buttonHover: "#93a1a1",
+                    gradient: ["#b58900", "#cb4b16", "#2aa198"]
+                }
+            },
+            {
+                name: "Monokai",
+                colors: {
+                    background: "#272822",
+                    foreground: "#f8f8f2",
+                    darkGray: "#3e3d32",
+                    buttonBg: "#75715e",
+                    buttonHover: "#a6e22e",
+                    gradient: ["#f92672", "#66d9ef", "#a6e22e"]
+                }
+            }
+        ];
 
-        // New Tab functionality
-        newTabBtn.addEventListener('click', () => {
-            placeholder.style.display = 'none';
-            const newTab = document.createElement('div');
-            newTab.classList.add('tab');
-            newTab.textContent = `Tab ${tabList.children.length + 1}`;
-            tabList.appendChild(newTab);
+        const dropdownContent = document.querySelector(".theme-dropdown-content");
+        const root = document.documentElement;
+        const tabsList = document.querySelector(".tabs-list");
+        const iframeContainer = document.querySelector(".iframe-container");
+        const tabsBtn = document.getElementById("tabsBtn");
+        const settingsBtn = document.getElementById("settingsBtn");
+        const tabsContainer = document.querySelector(".tabs-container");
+        const settingsContainer = document.querySelector(".settings-container");
+
+        themes.forEach((theme, index) => {
+            const option = document.createElement("div");
+            option.classList.add("theme-option");
+
+            const circle = document.createElement("div");
+            circle.classList.add("theme-circle");
+            circle.style.backgroundColor = theme.colors.background;
+
+            const label = document.createElement("span");
+            label.textContent = theme.name;
+
+            option.appendChild(circle);
+            option.appendChild(label);
+            option.addEventListener("click", () => applyTheme(index));
+
+            dropdownContent.appendChild(option);
         });
 
-        // Resize iframe functionality
-        resizeBtn.addEventListener('click', () => {
-            isIframeExpanded = !isIframeExpanded;
-            iframeContainer.style.width = isIframeExpanded ? '100%' : '70%';
-            tabsContainer.style.display = isIframeExpanded ? 'none' : 'flex';
-            settingsContainer.style.display = isIframeExpanded ? 'none' : 'none';
+        function applyTheme(index) {
+            const theme = themes[index];
+            root.style.setProperty("--background", theme.colors.background);
+            root.style.setProperty("--foreground", theme.colors.foreground);
+            root.style.setProperty("--dark-gray", theme.colors.darkGray);
+            root.style.setProperty("--button-bg", theme.colors.buttonBg);
+            root.style.setProperty("--button-hover", theme.colors.buttonHover);
+            root.style.setProperty("--gradient-start", theme.colors.gradient[0]);
+            root.style.setProperty("--gradient-middle", theme.colors.gradient[1]);
+            root.style.setProperty("--gradient-end", theme.colors.gradient[2]);
+        }
+
+        document.querySelector(".new-tab-btn").addEventListener("click", () => {
+            if (tabsList.childElementCount === 0) {
+                document.querySelector(".placeholder h1").style.display = "none";
+                document.querySelector(".placeholder p").style.display = "none";
+            }
+
+            const newTab = document.createElement("div");
+            newTab.classList.add("tab");
+            const tabIndex = tabsList.childElementCount + 1;
+            newTab.textContent = `Tab ${tabIndex}`;
+            tabsList.appendChild(newTab);
+
+            const iframe = document.createElement("iframe");
+            iframe.src = `https://example.com/?tab=${tabIndex}`;
+            iframeContainer.innerHTML = "";
+            iframeContainer.appendChild(iframe);
+
+            newTab.addEventListener("click", () => {
+                iframeContainer.innerHTML = "";
+                iframeContainer.appendChild(iframe);
+            });
         });
 
-        // Toggle between Tabs and Settings
-        tabsBtn.addEventListener('click', () => {
-            settingsContainer.style.display = 'none';
-            tabsContainer.style.display = 'flex';
+        tabsBtn.addEventListener("click", () => {
+            tabsContainer.classList.add("active");
+            settingsContainer.classList.remove("active");
         });
 
-        settingsBtn.addEventListener('click', () => {
-            tabsContainer.style.display = 'none';
-            settingsContainer.style.display = 'flex';
+        settingsBtn.addEventListener("click", () => {
+            settingsContainer.classList.add("active");
+            tabsContainer.classList.remove("active");
         });
+
+        applyTheme(0); // Default theme
     </script>
 </body>
 </html>
