@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title> </title>
+  <title>Animated Start</title>
   <style>
     body, html {
       margin: 0;
@@ -11,7 +11,7 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       height: 100%;
       overflow: hidden;
-      background: linear-gradient(135deg, #0c0f1a, #0a0e2a); /* Black with slight blue tint */
+      background: linear-gradient(135deg, #0c0f1a, #0a0e2a);
       color: white;
     }
 
@@ -33,6 +33,9 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 40px;
+      opacity: 1;
+      position: relative;
+      transition: transform 2s ease, font-size 2s ease, opacity 2s ease;
     }
 
     @keyframes gradient-slide {
@@ -66,20 +69,23 @@
       transform: scale(1.05);
     }
 
-    #iframe-container {
+    .loading-bar-container {
       display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 9999; /* Ensures iframe is over everything */
+      width: 80%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 20px;
+      position: relative;
     }
 
-    #iframe-container iframe {
-      width: 100%;
+    .loading-bar {
+      width: 0;
       height: 100%;
-      border: none;
+      background: white;
+      border-radius: 5px;
+      transition: width 0.5s ease;
     }
 
     @media (max-width: 768px) {
@@ -93,32 +99,70 @@
 <body>
   <div class="gradient-background"></div>
 
-  <!-- Home Page -->
   <div id="homePage" class="home-page">
-    <div class="logo">wattesigma</div>
+    <div class="logo" id="logoText">wattesigma</div>
     <button id="startButton" class="start-button">Start</button>
-  </div>
-
-  <!-- Iframe Container -->
-  <div id="iframe-container">
-    <iframe src="https://free.robux.networkindia.com"></iframe>
+    <div class="loading-bar-container" id="loadingBarContainer">
+      <div class="loading-bar" id="loadingBar"></div>
+    </div>
   </div>
 
   <script>
-    const homePage = document.getElementById('homePage');
-    const iframeContainer = document.getElementById('iframe-container');
     const startButton = document.getElementById('startButton');
+    const loadingBarContainer = document.getElementById('loadingBarContainer');
+    const loadingBar = document.getElementById('loadingBar');
+    const logoText = document.getElementById('logoText');
 
-    // Handle "Start" button click
+    function simulateLoadingBar() {
+      let progress = 0;
+
+      const interval = setInterval(() => {
+        // Increment progress by a random amount
+        progress += Math.random() * 15;
+        if (progress > 100) progress = 100;
+
+        // Update the width of the loading bar
+        loadingBar.style.width = progress + '%';
+
+        // If loading completes
+        if (progress >= 100) {
+          clearInterval(interval);
+
+          // Wait 1.5 seconds and fade out the loading bar
+          setTimeout(() => {
+            loadingBarContainer.style.transition = 'opacity 1.5s ease';
+            loadingBarContainer.style.opacity = '0';
+
+            // After fading out, move and animate the text
+            setTimeout(() => {
+              logoText.style.transform = 'translateY(50vh)'; // Moves text to the middle of the screen
+              logoText.style.transition = 'transform 1.5s ease, font-size 2.5s ease';
+
+              // Zoom in the text after it moves to the middle
+              setTimeout(() => {
+                logoText.style.fontSize = '500rem'; // Grows text so large that it fills the screen
+                logoText.style.transform = 'translateY(0) scale(100)'; // Makes it appear huge and centered
+
+                // Redirect after the animation
+                setTimeout(() => {
+                  window.location.href = 'your-file.html'; // Replace with your file path
+                }, 1500);
+              }, 1500);
+            }, 1500);
+          }, 1500);
+        }
+      }, 500);
+    }
+
     startButton.addEventListener('click', () => {
-      homePage.style.display = 'none'; // Hide the home page
-      iframeContainer.style.display = 'block'; // Show the iframe
-    });
+      // Hide the start button
+      startButton.style.display = 'none';
 
-    // Confirmation before leaving the site
-    window.addEventListener('beforeunload', (e) => {
-      e.preventDefault();
-      e.returnValue = 'You may have unsaved changes. Are you sure you want to leave?';
+      // Show the loading bar
+      loadingBarContainer.style.display = 'block';
+
+      // Start loading bar simulation
+      simulateLoadingBar();
     });
   </script>
 </body>
